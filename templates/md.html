@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}MD Analysis{% endblock %}
+{% block content %}
+<h1>MD Analysis</h1>
+
+<div class="card">
+    <p style="color:#666; font-size:.92rem; margin-bottom:1rem;">
+        Molecular dynamics (GROMACS) trajectory analysis results for {{ items|length }} species.
+        Each species includes 8 types of analysis plots: RMSD, RMSF, Rg, hydrogen bonds, minimum distance, temperature, pressure and potential. Click a species to view details.
+    </p>
+    {% if items %}
+    <table>
+        <thead><tr><th>Species</th><th>Plots</th><th>Action</th></tr></thead>
+        <tbody>
+            {% for it in items %}
+            <tr>
+                <td>
+                    {% if it.sp %}<em>{{ it.sp.Scientific_Name }}</em><br><small>{{ it.sp.Chinese_Name }} ({{ it.sid }})</small>{% else %}{{ it.sid }}{% endif %}
+                </td>
+                <td>{{ it.count }} plots</td>
+                <td><a href="/md/{{ it.sid }}"><strong>View plots &rarr;</strong></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><p>No MD analysis data.</p></div>
+    {% endif %}
+</div>
+{% endblock %}

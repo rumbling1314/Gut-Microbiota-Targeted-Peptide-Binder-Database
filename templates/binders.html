@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Binder Library{% endblock %}
+{% block content %}
+<h1>Binder Library</h1>
+<div class="search-box">
+    <form method="GET" action="/binders" style="display:flex; gap:.5rem; width:100%;">
+        <input type="text" name="q" value="{{ q }}" placeholder="Search by binder ID / sequence / species...">
+        <button type="submit">Search</button>
+    </form>
+</div>
+<div class="card">
+    {% if binders %}
+    <table>
+        <thead><tr>
+            <th>Binder ID</th><th>Species</th><th>Sequence</th><th>Length</th>
+            <th>Interface Energy dG</th><th>Interface Area dSASA</th><th>Binder pLDDT</th><th>Structure File</th>
+        </tr></thead>
+        <tbody>
+            {% for b in binders %}
+            <tr>
+                <td><a href="/binders/{{ b.Binder_ID }}"><strong>{{ b.Binder_ID }}</strong></a></td>
+                <td><em>{{ b.Scientific_Name }}</em><br><small>{{ b.Chinese_Name }} ({{ b.Species_ID }})</small></td>
+                <td style="font-family:monospace; font-size:.8rem;max-width:230px;word-break:break-all;">{{ b.Binder_Sequence }}</td>
+                <td>{{ b.Length or '-' }}</td>
+                <td>
+                    {% if b.Raw_Score is not none %}
+                    <span class="badge {% if b.Raw_Score < -6 %}badge-green{% elif b.Raw_Score < -4 %}badge-blue{% else %}badge-orange{% endif %}">{{ "%.2f"|format(b.Raw_Score) }}</span>
+                    {% else %}<small style="color:#e67e22;">To be added</small>{% endif %}
+                </td>
+                <td>{% if b.dSASA_int is not none %}{{ "%.0f"|format(b.dSASA_int) }}{% else %}-{% endif %}</td>
+                <td>{% if b.pLDDT_binder is not none %}{{ "%.1f"|format(b.pLDDT_binder) }}{% else %}-{% endif %}</td>
+                <td style="font-size:.78rem;">{{ b.Structure_File or '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}<div class="empty-state"><p>No Binder data</p></div>{% endif %}
+</div>
+{% endblock %}

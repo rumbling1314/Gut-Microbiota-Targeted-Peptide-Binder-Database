@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Target Proteins List{% endblock %}
+{% block content %}
+<h1>Target Proteins</h1>
+<div class="search-box">
+    <form method="GET" action="/proteins" style="display:flex; gap:.5rem; width:100%;">
+        <input type="text" name="q" value="{{ q }}" placeholder="Search by protein ID / accession / species...">
+        <button type="submit">Search</button>
+    </form>
+</div>
+<div class="card">
+    <table>
+        <thead><tr>
+            <th>Protein ID</th>
+            <th>Accession (ID)</th>
+            <th>Species</th>
+            <th>Full / Design<br><small>(aa)</small></th>
+            <th>DeepLocPro<br><small>(Ext. probability)</small></th>
+            <th>SignalP<br><small>(SP length)</small></th>
+            <th>DeepTMHMM</th>
+            <th>Pfam Family</th>
+        </tr></thead>
+        <tbody>
+            {% for p in proteins %}
+            <tr>
+                <td><a href="/proteins/{{ p.Protein_ID }}"><strong>{{ p.Protein_ID }}</strong></a></td>
+                <td style="font-family:monospace;font-size:.82rem;">{{ p.ID_Accession }}</td>
+                <td><a href="/species/{{ p.Species_ID }}"><em>{{ p.Scientific_Name }}</em><br><small>{{ p.Chinese_Name }}</small></a></td>
+                <td><strong>{{ p.Full_Length }}</strong> / {{ p.AA_Length }}</td>
+                <td>
+                    {% if p.DeepLocPro_Location == 'Extracellular' %}
+                    <span class="badge badge-green">Extracellular</span>
+                    {% else %}
+                    <span class="badge badge-blue">Cytoplasmic</span>
+                    {% endif %}
+                    <small style="color:#888;">{{ '%.3f'|format(p.DeepLocPro_ExtProb) }}</small>
+                </td>
+                <td>
+                    {% if p.SignalP_Category.startswith('SPII') %}
+                    <span class="badge badge-orange">SPII Lipoprotein</span>
+                    {% elif p.SignalP_Category.startswith('SPI') %}
+                    <span class="badge badge-blue">SPI</span>
+                    {% else %}
+                    <span class="badge" style="background:#eee;color:#888;">OTHER</span>
+                    {% endif %}
+                    <small style="color:#888;">{% if p.SignalP_SPLen %}{{ p.SignalP_SPLen }}aa{% else %}-{% endif %}</small>
+                </td>
+                <td>
+                    {% if p.DeepTMHMM_Type in ('TM','SP+TM') %}
+                    <span class="badge badge-orange">{{ p.DeepTMHMM_Type }}</span>
+                    {% else %}
+                    <span class="badge badge-green">{{ p.DeepTMHMM_Type }}</span>
+                    {% endif %}
+                </td>
+                <td style="font-size:.8rem;max-width:170px;">{{ p.Pfam_Family.replace('；','; ') if p.Pfam_Family else '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p style="font-size:.82rem;color:#888;">
+    <strong>Full</strong> is the original protein sequence length; <strong>Design</strong> is the sequence length actually used for binder design (after removing the signal peptide / selecting the accessible region).
+    Localization integrates four tools — DeepLocPro 2, SignalP 6.0, DeepTMHMM and Pfam; see each protein detail page for the complete assessment.
+</p>
+{% endblock %}

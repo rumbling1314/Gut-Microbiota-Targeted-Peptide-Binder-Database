@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}MD Analysis - {{ sp.Scientific_Name }}{% endblock %}
+{% block content %}
+<h1>MD Analysis · {{ sp.Scientific_Name }} ({{ sp.Species_ID }})</h1>
+
+<div class="card">
+    <p style="color:#666; font-size:.92rem;">
+        Scientific name: <span style="font-style:italic;">{{ sp.Scientific_Name }}</span>
+        <small>({{ sp.Chinese_Name }})</small>
+    </p>
+</div>
+
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(420px, 1fr)); gap:1.2rem;">
+    {% for key, title, desc, has in plots %}
+    <div class="card" style="margin-bottom:0;">
+        <h2>{{ title }}</h2>
+        <p style="color:#888; font-size:.82rem; margin-bottom:.7rem;">{{ desc }}</p>
+        {% if has %}
+        <img src="/static/md_plots/{{ num }}/{{ key }}.png" alt="{{ title }}"
+             loading="lazy"
+             onclick="openLightbox(this.src, this.alt)"
+             style="width:100%; border:1px solid #eee; border-radius:6px; cursor:zoom-in; display:block;">
+        {% else %}
+        <div style="padding:2rem; text-align:center; color:#e67e22; font-size:.88rem; border:1px dashed #ddd; border-radius:6px;">Plot not available</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Image zoom Lightbox -->
+<div id="lightbox" onclick="closeLightbox()"
+     style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.8); z-index:10000; align-items:center; justify-content:center; padding:2rem; cursor:zoom-out;">
+    <img id="lightbox-img" src="" alt="" style="max-width:100%; max-height:100%; border-radius:6px; box-shadow:0 10px 40px rgba(0,0,0,.5);">
+</div>
+<script>
+function openLightbox(src, alt){
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox-img').alt = alt;
+    document.getElementById('lightbox').style.display = 'flex';
+}
+function closeLightbox(){
+    document.getElementById('lightbox').style.display = 'none';
+    document.getElementById('lightbox-img').src = '';
+}
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeLightbox(); });
+</script>
+
+<p style="margin-top:1.5rem;"><a href="/md">&larr; Back to MD Analysis</a></p>
+{% endblock %}

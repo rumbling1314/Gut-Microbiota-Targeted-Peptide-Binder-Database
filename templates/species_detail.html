@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}{{ sp.Scientific_Name }}{% endblock %}
+{% block content %}
+<h1>{{ sp.Scientific_Name }} <small style="font-size:.6em; color:#888;">({{ sp.Species_ID }})</small></h1>
+<div class="card">
+    <h2>Species Information</h2>
+    <div class="detail-grid">
+        <div class="detail-label">ID</div><div>{{ sp.Species_ID }}</div>
+        <div class="detail-label">Scientific Name</div><div><em>{{ sp.Scientific_Name }}</em></div>
+        <div class="detail-label">Chinese Name</div><div>{{ sp.Chinese_Name }}</div>
+        <div class="detail-label">Taxonomy ID</div><div>{{ sp.Taxonomy_ID }}</div>
+        <div class="detail-label">Genome Accession</div><div>{{ sp.Genome_Accession }}</div>
+        <div class="detail-label">Proteome Source</div><div>{{ sp.Proteome_Source }}</div>
+        <div class="detail-label">Research Focus</div><div>{{ sp.Notes }}</div>
+    </div>
+</div>
+<div class="card">
+    <h2>Target Proteins ({{ proteins|length }})</h2>
+    {% if proteins %}
+    <table>
+        <thead><tr><th>Protein ID</th><th>Accession (ID)</th><th>Full / Design (aa)</th><th>Localization</th><th>Hotspots</th></tr></thead>
+        <tbody>
+            {% for p in proteins %}
+            <tr>
+                <td><a href="/proteins/{{ p.Protein_ID }}"><strong>{{ p.Protein_ID }}</strong></a></td>
+                <td style="font-family:monospace;font-size:.82rem;">{{ p.ID_Accession }}</td>
+                <td>{{ p.Full_Length }} / {{ p.AA_Length }}</td>
+                <td>
+                    {% if p.DeepLocPro_Location == 'Extracellular' %}<span style="color:#2e7d32;font-weight:600;">Extracellular</span>{% else %}<span style="color:#1565c0;font-weight:600;">Cytoplasmic membrane</span>{% endif %}
+                    <small style="color:#888;">({{ p.DeepTMHMM_Type }})</small>
+                </td>
+                <td style="font-size:.78rem;font-family:monospace;">{{ p.Notes or '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}<div class="empty-state"><p>No target proteins</p></div>{% endif %}
+</div>
+<div class="card">
+    <h2>Binders ({{ binders|length }})</h2>
+    {% if binders %}
+    <table>
+        <thead><tr><th>Binder ID</th><th>Sequence</th><th>Length</th><th>Score</th><th>Structure File</th></tr></thead>
+        <tbody>
+            {% for b in binders %}
+            <tr>
+                <td><a href="/binders/{{ b.Binder_ID }}"><strong>{{ b.Binder_ID }}</strong></a></td>
+                <td style="font-family:monospace; font-size:.83rem;">{{ b.Binder_Sequence }}</td>
+                <td>{{ b.Length or '-' }}</td>
+                <td>
+                    {% if b.Raw_Score %}
+                    <span class="badge {% if b.Raw_Score < -6 %}badge-green{% elif b.Raw_Score < -4 %}badge-blue{% else %}badge-orange{% endif %}">
+                        {{ "%.2f"|format(b.Raw_Score) }}
+                    </span>{% else %}-{% endif %}
+                </td>
+                <td style="font-size:.82rem;">{{ b.Structure_File or '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}<div class="empty-state"><p>No binders</p></div>{% endif %}
+</div>
+{% endblock %}

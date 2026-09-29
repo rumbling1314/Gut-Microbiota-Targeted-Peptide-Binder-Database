@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}{{ b.Binder_ID }}{% endblock %}
+{% block content %}
+<h1>{{ b.Binder_ID }}</h1>
+
+<div class="card">
+    <h2>Binder Information</h2>
+    <div class="detail-grid">
+        <div class="detail-label">Binder ID</div><div>{{ b.Binder_ID }}</div>
+        <div class="detail-label">Target Protein</div><div><a href="/species/{{ b.Species_ID }}"><em>{{ b.Scientific_Name }}</em> ({{ b.Chinese_Name }})</a></div>
+        <div class="detail-label">Sequence</div><div class="seq-box" style="display:inline-block;">{{ b.Binder_Sequence }}</div>
+        <div class="detail-label">Length</div><div>{{ b.Length or '-' }} aa</div>
+        <div class="detail-label">Sequence File</div><div>{{ b.Sequence_File or '-' }}</div>
+        <div class="detail-label">Structure File (PDB)</div>
+        <div>
+            {% if b.Structure_File %}
+            <a href="#" onclick="confirmDownload('{{ b.Structure_File }}');return false;"
+               style="font-family:monospace; text-decoration:underline; cursor:pointer;" title="Click to download the PDB file">
+               <strong>{{ b.Structure_File }}</strong>
+            </a>
+            <small style="color:#888;">(click to download)</small>
+            {% else %}-{% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Rosetta Interface Energy</h2>
+    {% if b.Raw_Score is not none %}
+    <div class="detail-grid">
+        <div class="detail-label">Interface binding free energy dG_separated</div>
+        <div><span class="badge {% if b.Raw_Score < -6 %}badge-green{% elif b.Raw_Score < -4 %}badge-blue{% else %}badge-orange{% endif %}" style="font-size:.95rem;">{{ "%.3f"|format(b.Raw_Score) }} REU</span></div>
+        <div class="detail-label">Normalized dG_separated/dSASA×100</div><div>{{ "%.3f"|format(b.dG_sep_norm) }}</div>
+        <div class="detail-label">Interface buried area dSASA_int</div><div>{{ "%.2f"|format(b.dSASA_int) }} Ų</div>
+        <div class="detail-label">complex_normalized</div><div>{{ "%.3f"|format(b.complex_norm) }}</div>
+        <div class="detail-label">total_score</div><div>{{ "%.2f"|format(b.total_score) }}</div>
+        <div class="detail-label">packstat</div><div>{{ "%.3f"|format(b.packstat) }}</div>
+        <div class="detail-label">Interface hydrogen bonds hbonds_int</div><div>{{ b.hbonds_int }}</div>
+    </div>
+    {% else %}
+    <p style="color:#e67e22;">The Rosetta energy for this binder ({{ b.Structure_File }}) has not yet been compiled; to be added.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>AlphaFold2 Structure Quality</h2>
+    {% if b.pLDDT_total is not none %}
+    <div class="detail-grid">
+        <div class="detail-label">Overall pLDDT</div><div>{{ "%.2f"|format(b.pLDDT_total) }}</div>
+        <div class="detail-label">Binder pLDDT</div><div>{{ "%.2f"|format(b.pLDDT_binder) }}</div>
+        <div class="detail-label">Interface PAE</div><div>{{ "%.3f"|format(b.PAE_interaction) }}</div>
+        <div class="detail-label">Binder RMSD</div><div>{{ "%.3f"|format(b.binder_RMSD) }} Ų</div>
+        <div class="detail-label">Target RMSD</div><div>{{ "%.3f"|format(b.target_RMSD) }} Ų</div>
+    </div>
+    {% else %}
+    <p style="color:#e67e22;">The AF2 quality metrics for this binder have not yet been compiled; to be added.</p>
+    {% endif %}
+</div>
+
+{% if b.Structure_File %}
+<div class="card">
+    <h2>3D Structure Preview</h2>
+    <div id="pdb-viewer"></div>
+    <p style="font-size:.82rem; color:#888; margin-top:.5rem;">
+        PDB file:
+        <a href="#" onclick="confirmDownload('{{ b.Structure_File }}');return false;"
+           style="font-family:monospace; text-decoration:underline; cursor:pointer;">{{ b.Structure_File }}</a>
+        · Chain A is the binder, chain B is the target protein
+    </p>
+</div>
+
+<script>
+(function(){
+    var viewer = $3Dmol.createViewer(document.getElementById('pdb-viewer'), {backgroundColor:'white'});
+    fetch('/static/pdb_files/' + "{{ b.Structure_File }}")
+        .then(r => { if (!r.ok) throw new Error('PDB file not found'); return r.text(); })
+        .then(function(pdbtext){
+            viewer.addModel(pdbtext, 'pdb');
+            viewer.setStyle({chain:'A'}, {cartoon:{color:'#2980b9'}});
+            viewer.setStyle({chain:'B'}, {cartoon:{color:'#cccccc'}});
+            viewer.zoomTo(); viewer.render();
+        })
+        .catch(function(e){
+            document.getElementById('pdb-viewer').innerHTML =
+                '<div style="padding:3rem;text-align:center;color:#999;">PDB file not found</div>';
+        });
+})();
+</script>
+{% endif %}
+
+<!-- Download confirmation dialog -->
+<div id="dl-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.45); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:10px; padding:1.5rem 1.8rem; width:90%; max-width:430px; box-shadow:0 10px 40px rgba(0,0,0,.25);">
+        <h3 style="font-size:1.05rem; color:#2c3e50; margin-bottom:.6rem;">Download PDB File</h3>
+        <p style="font-size:.9rem; color:#666; word-break:break-all;">Do you want to download the file<br><span id="dl-fname" style="font-family:monospace; color:#2980b9; font-size:.86rem;"></span> ?</p>
+        <div style="display:flex; justify-content:flex-end; gap:.7rem; margin-top:1.3rem;">
+            <button id="dl-cancel" type="button" style="padding:.5rem 1.2rem; border:1px solid #ccc; background:white; border-radius:6px; cursor:pointer; font-size:.9rem;">Cancel</button>
+            <button id="dl-ok" type="button" style="padding:.5rem 1.2rem; background:#2980b9; color:white; border:none; border-radius:6px; cursor:pointer; font-size:.9rem;">Confirm Download</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function(){
+    var dlFile = null;
+    var modal = document.getElementById('dl-modal');
+    window.confirmDownload = function(fname){
+        dlFile = fname;
+        document.getElementById('dl-fname').textContent = fname;
+        modal.style.display = 'flex';
+    };
+    function closeModal(){ modal.style.display = 'none'; dlFile = null; }
+    document.getElementById('dl-cancel').onclick = closeModal;
+    modal.addEventListener('click', function(e){ if(e.target === modal) closeModal(); });
+    document.getElementById('dl-ok').onclick = function(){
+        if(dlFile){
+            var a = document.createElement('a');
+            a.href = '/static/pdb_files/' + dlFile;
+            a.download = dlFile;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        }
+        closeModal();
+    };
+})();
+</script>
+
+<p><a href="/binders">&larr; Back to Binder Library</a></p>
+{% endblock %}

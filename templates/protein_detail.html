@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}{{ p.Protein_ID }} - Protein Detail{% endblock %}
+{% block content %}
+<h1>{{ p.Protein_ID }}</h1>
+
+<div class="card">
+    <h2>Basic Information</h2>
+    <div class="detail-grid">
+        <div class="detail-label">Protein ID</div><div><strong>{{ p.Protein_ID }}</strong></div>
+        <div class="detail-label">Accession (ID)</div><div style="font-family:monospace;">{{ p.ID_Accession }}</div>
+        <div class="detail-label">Species</div><div><a href="/species/{{ p.Species_ID }}"><em>{{ p.Scientific_Name }}</em> ({{ p.Chinese_Name }})</a></div>
+        <div class="detail-label">Full / Design Length</div><div>{{ p.Full_Length }} aa <small style="color:#888;">/ Design {{ p.AA_Length }} aa</small></div>
+        <div class="detail-label">Localization Evidence (detailed)</div><div>{{ p.Localization_Evidence }}</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Subcellular Localization Prediction</h2>
+    <div class="detail-grid">
+        <div class="detail-label">DeepLocPro 2</div>
+        <div>
+            {% if p.DeepLocPro_Location == 'Extracellular' %}
+            <span class="badge badge-green">Extracellular</span>
+            {% else %}
+            <span class="badge badge-blue">Cytoplasmic Membrane</span>
+            {% endif %}
+            <small style="color:#888;">Ext. probability {{ '%.4f'|format(p.DeepLocPro_ExtProb) }}</small>
+        </div>
+        <div class="detail-label">SignalP 6.0</div>
+        <div>{{ p.SignalP_Category }} <small style="color:#888;">SP length {% if p.SignalP_SPLen %}{{ p.SignalP_SPLen }} aa{% else %}no signal peptide{% endif %}</small></div>
+        <div class="detail-label">DeepTMHMM</div>
+        <div>
+            {% if p.DeepTMHMM_Type in ('TM','SP+TM') %}
+            <span class="badge badge-orange">{{ p.DeepTMHMM_Type }} with TM</span>
+            {% else %}
+            <span class="badge badge-green">{{ p.DeepTMHMM_Type }} no TM</span>
+            {% endif %}
+        </div>
+        <div class="detail-label">Pfam Family</div>
+        <div>
+            {% if p.Pfam_Family %}
+                {% for fam in p.Pfam_Family.replace('；',';').split(';') %}
+                    {% if fam.strip() %}<span class="badge badge-blue" style="margin:.1rem;">{{ fam.strip() }}</span>{% endif %}
+                {% endfor %}
+            {% else %}<span style="color:#999;">No domain hit</span>{% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2 style="display:flex;justify-content:space-between;align-items:center;">
+        Protein Sequence (for design, {{ p.AA_Length }} aa)
+        <button onclick="navigator.clipboard.writeText(document.getElementById('seq').innerText);this.innerText='Copied'"
+                style="font-size:.75rem;padding:.2rem .7rem;background:#2980b9;color:#fff;border:none;border-radius:5px;cursor:pointer;">Copy</button>
+    </h2>
+    <div id="seq" class="seq-box" style="white-space:pre-wrap;word-break:break-all;">{{ p.Protein_Sequence }}</div>
+</div>
+
+{% if p.Notes %}
+<div class="card">
+    <h2>Hotspot Residues</h2>
+    <div>
+        {% for h in p.Notes.replace('Hotspots:','').split(',') %}
+        <span class="badge badge-orange" style="margin:.12rem;font-weight:500;">{{ h }}</span>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if binders %}
+<div class="card">
+    <h2>Corresponding Binders ({{ binders|length }})</h2>
+    <table>
+        <thead><tr><th>Binder ID</th><th>Sequence</th><th>Length</th><th>Score</th><th>Structure File</th></tr></thead>
+        <tbody>
+            {% for b in binders %}
+            <tr>
+                <td><a href="/binders/{{ b.Binder_ID }}"><strong>{{ b.Binder_ID }}</strong></a></td>
+                <td style="font-family:monospace;font-size:.82rem;">{{ b.Binder_Sequence }}</td>
+                <td>{{ b.Length or '-' }}</td>
+                <td>
+                    {% if b.Raw_Score %}
+                    <span class="badge {% if b.Raw_Score < -6 %}badge-green{% elif b.Raw_Score < -4 %}badge-blue{% else %}badge-orange{% endif %}">{{ "%.2f"|format(b.Raw_Score) }}</span>
+                    {% else %}-{% endif %}
+                </td>
+                <td style="font-size:.8rem;">{{ b.Structure_File or '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<p><a href="/species/{{ p.Species_ID }}">&larr; Back to species detail</a></p>
+{% endblock %}

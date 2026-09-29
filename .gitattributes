@@ -1,0 +1,13 @@
+# Normalize text files to LF in the repository
+* text=auto eol=lf
+
+# Binary assets — never modify
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.db   binary
+*.xlsx binary
+
+# Structure files — keep LF line endings on every platform
+*.pdb text eol=lf

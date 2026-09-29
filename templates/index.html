@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Gut Microbiota Targeted Peptide Design Database{% endblock %}
+{% block content %}
+<div style="text-align:center; padding:1rem 0 2rem;">
+    <h1 style="font-size:1.75rem; color:#1a5276; margin-bottom:.7rem; line-height:1.35;">Gut Microbiota Targeted Peptide Design Database</h1>
+    <p style="font-size:1.02rem; color:#2980b9; font-weight:500; margin-bottom:.9rem;">— A Bioinformatics Resource for Identifying Functional Bacteria in the Complex Gut Microbiota</p>
+    <p style="font-size:.82rem; color:#999;">肠道菌靶向多肽设计数据库 —— 面向复杂肠道菌群功能菌识别的生物信息资源库</p>
+</div>
+
+<h2 style="font-size:1.3rem; color:#1a5276; margin-bottom:1rem;">Database Overview</h2>
+
+<div class="stats-grid">
+    <div class="stat-card"><div class="stat-number">{{ stats.species }}</div><div class="stat-label">Total Species</div></div>
+    <div class="stat-card"><div class="stat-number">{{ stats.proteins }}</div><div class="stat-label">Target Proteins</div></div>
+    <div class="stat-card stat-highlight"><div class="stat-number">{{ stats.success_species }}</div><div class="stat-label">Species with Binders</div></div>
+    <div class="stat-card stat-highlight"><div class="stat-number">{{ stats.success_proteins }}</div><div class="stat-label">Proteins with Binders</div></div>
+    <div class="stat-card"><div class="stat-number">{{ stats.binders }}</div><div class="stat-label">Total Binders</div></div>
+</div>
+
+{% if recent %}
+<div class="card">
+    <h2>Top Binders (sorted by interface energy)</h2>
+    <table>
+        <thead><tr><th>Binder ID</th><th>Species</th><th>Sequence</th><th>Length</th><th>Interface Energy dG</th></tr></thead>
+        <tbody>
+            {% for b in recent %}
+            <tr>
+                <td><a href="/binders/{{ b.Binder_ID }}"><strong>{{ b.Binder_ID }}</strong></a></td>
+                <td><em>{{ b.Scientific_Name }}</em><br><small>{{ b.Chinese_Name }} ({{ b.Species_ID }})</small></td>
+                <td style="font-family:monospace; font-size:.83rem;">{{ b.Binder_Sequence }}</td>
+                <td>{{ b.Length or '-' }}</td>
+                <td>
+                    {% if b.Raw_Score %}
+                    <span class="badge {% if b.Raw_Score < -6 %}badge-green{% elif b.Raw_Score < -4 %}badge-blue{% else %}badge-orange{% endif %}">
+                        {{ "%.2f"|format(b.Raw_Score) }}
+                    </span>{% else %}-{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card empty-state">
+    <p>No Binder data available.</p>
+    <p style="font-size:.85rem;">Populate data/proteins.csv and data/binders.csv, then run <code>python batch_import.py</code></p>
+</div>
+{% endif %}
+{% endblock %}
