@@ -55,7 +55,8 @@ python app.py            # 3. start the web server
 │   ├── md.html             # molecular-dynamics analysis list
 │   └── md_detail.html      # molecular-dynamics plots for one species
 ├── static/
-│   ├── pdb_files/          # AlphaFold2 predicted binder structures (.pdb)
+│   ├── pdb_files/          # AlphaFold2 predicted binder complex structures (.pdb, chain A=binder, B=target)
+│   ├── target_pdb_files/   # target protein structures used for binder design (.pdb)
 │   └── md_plots/           # GROMACS analysis plots, one folder per species (8 plots each)
 └── data/                   # import data
     ├── proteins.csv        # target proteins (19 rows, 14 columns)
@@ -71,7 +72,7 @@ python app.py            # 3. start the web server
 | `/species` | Species list | all 32 species, keyword search via `?q=` |
 | `/species/<Species_ID>` | Species detail | target proteins and binders of one species |
 | `/proteins` | Target protein list | searchable |
-| `/proteins/<Protein_ID>` | Target protein detail | protein sequence and related binders |
+| `/proteins/<Protein_ID>` | Target protein detail | protein sequence, target 3D structure (PDB download) and related binders |
 | `/binders` | Binder list | sorted by Raw_Score, searchable |
 | `/binders/<Binder_ID>` | Binder detail | sequence, scores, interactive 3D structure, PDB download |
 | `/md` | MD analysis list | species with molecular-dynamics plots |

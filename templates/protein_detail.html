@@ -91,5 +91,58 @@
 </div>
 {% endif %}
 
+{% if target_pdb %}
+<div class="card">
+    <h2>Target Structure (PDB)</h2>
+    <div id="target-viewer" style="position:relative; width:100%; height:450px; border:1px solid #ddd; border-radius:8px; background:#fafafa; overflow:hidden;"></div>
+    <p style="font-size:.82rem; color:#888; margin-top:.6rem;">
+        PDB file:
+        <a href="#" onclick="confirmTargetDownload();return false;" style="font-family:monospace; text-decoration:underline; cursor:pointer;">{{ target_pdb }}</a>
+        · target structure used for binder design (click to download)
+    </p>
+</div>
+
+<script>
+(function(){
+    var viewer=$3Dmol.createViewer(document.getElementById('target-viewer'),{backgroundColor:'white'});
+    fetch('/static/target_pdb_files/'+"{{ target_pdb }}")
+      .then(r=>{if(!r.ok)throw 0;return r.text();})
+      .then(function(t){
+          viewer.addModel(t,'pdb');
+          viewer.setStyle({},{cartoon:{color:'#16a085'}});
+          viewer.zoomTo();viewer.render();
+      })
+      .catch(function(){
+          document.getElementById('target-viewer').innerHTML='<div style="padding:3rem;text-align:center;color:#999;">PDB file not found</div>';
+      });
+})();
+</script>
+
+<div id="t-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.45); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; border-radius:10px; padding:1.5rem 1.8rem; width:90%; max-width:430px; box-shadow:0 10px 40px rgba(0,0,0,.25);">
+        <h3 style="font-size:1.05rem; color:#2c3e50; margin-bottom:.6rem;">Download Target PDB File</h3>
+        <p style="font-size:.9rem; color:#666; word-break:break-all;">Do you want to download the file<br><span style="font-family:monospace; color:#16a085; font-size:.86rem;">{{ target_pdb }}</span> ?</p>
+        <div style="display:flex; justify-content:flex-end; gap:.7rem; margin-top:1.3rem;">
+            <button type="button" onclick="document.getElementById('t-modal').style.display='none'" style="padding:.5rem 1.2rem; border:1px solid #ccc; background:white; border-radius:6px; cursor:pointer; font-size:.9rem;">Cancel</button>
+            <button type="button" id="t-ok" style="padding:.5rem 1.2rem; background:#16a085; color:white; border:none; border-radius:6px; cursor:pointer; font-size:.9rem;">Confirm Download</button>
+        </div>
+    </div>
+</div>
+<script>
+(function(){
+    var modal=document.getElementById('t-modal');
+    window.confirmTargetDownload=function(){ modal.style.display='flex'; };
+    modal.addEventListener('click',function(e){ if(e.target===modal) modal.style.display='none'; });
+    document.getElementById('t-ok').onclick=function(){
+        var a=document.createElement('a');
+        a.href='/static/target_pdb_files/'+"{{ target_pdb }}";
+        a.download="{{ target_pdb }}";
+        document.body.appendChild(a); a.click(); a.remove();
+        modal.style.display='none';
+    };
+})();
+</script>
+{% endif %}
+
 <p><a href="/species/{{ p.Species_ID }}">&larr; Back to species detail</a></p>
 {% endblock %}

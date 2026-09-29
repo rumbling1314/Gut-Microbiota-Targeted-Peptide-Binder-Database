@@ -133,7 +133,9 @@ def protein_detail(pid):
     binders = db.execute("""
         SELECT * FROM Binder WHERE Species_ID=? ORDER BY Raw_Score
     """, (p['Species_ID'],)).fetchall()
-    return render_template('protein_detail.html', p=p, binders=binders)
+    _num = SID2NUM.get(p['Species_ID'])
+    target_pdb = (_num + '_target.pdb') if _num else None
+    return render_template('protein_detail.html', p=p, binders=binders, target_pdb=target_pdb)
 
 # Binder列表
 @app.route('/binders')
