@@ -10,6 +10,9 @@ app = Flask(__name__)
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "binder_db.db")
 MD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "md_plots")
 
+# Public GitHub repository URL (replaced with the real remote URL before publishing)
+REPO_URL = "https://github.com/Peptidewell/gut-microbiota-targeted-peptide-design-database"
+
 # Binder/MD 编号 -> Species_ID
 NUM2SID = {
     '009':'ANB','014':'RBR','016':'BCR','022':'RCA','023':'RIN','027':'FSA','028':'AHA',
@@ -193,6 +196,18 @@ def md_detail(sid):
     available = {x[:-4] for x in os.listdir(d) if x.endswith('.png')}
     plots = [(key, title, desc, key in available) for key, title, desc in PLOT_META]
     return render_template('md_detail.html', sp=sp, num=num, plots=plots)
+
+# About / 简介
+@app.route('/about')
+def about():
+    db = get_db()
+    counts = {
+        'species':  db.execute("SELECT COUNT(*) FROM Species").fetchone()[0],
+        'proteins': db.execute("SELECT COUNT(*) FROM Target_Protein").fetchone()[0],
+        'binders':  db.execute("SELECT COUNT(*) FROM Binder").fetchone()[0],
+    }
+    return render_template('about.html', c=counts,
+                           repo_url=REPO_URL, repo_issues=REPO_URL + '/issues')
 
 if __name__ == '__main__':
     print("=" * 50)

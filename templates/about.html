@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}About · Gut Microbiota Targeted Peptide Design Database{% endblock %}
+{% block content %}
+<style>
+    .about-hero h1 { font-size:1.7rem; line-height:1.3; }
+    .about-hero .sub { color:#2980b9; font-weight:600; margin:.3rem 0 .8rem; }
+    .about-hero p.lead { color:#555; font-size:.98rem; max-width:880px; }
+    .section-title { font-size:1.15rem; color:#1a5276; margin-bottom:.9rem; border-left:4px solid #2980b9; padding-left:.6rem; }
+    p.body { color:#444; font-size:.93rem; margin-bottom:.8rem; }
+    /* team */
+    .namelist { list-style:none; font-size:.96rem; color:#2c3e50; }
+    .namelist li { padding:.18rem 0; }
+    .affil { font-size:.95rem; color:#2c3e50; }
+    .btn { display:inline-block; padding:.6rem 1.4rem; border-radius:6px; font-size:.92rem; cursor:pointer; }
+    .btn-primary { background:#2980b9; color:white; }
+    .btn-primary:hover { background:#1f6391; text-decoration:none; }
+    .cite-note { font-size:.82rem; color:#e67e22; margin-top:.5rem; }
+</style>
+
+<div class="card about-hero">
+    <h1>Gut Microbiota Targeted Peptide Design Database</h1>
+    <div class="sub">A Bioinformatics Resource for Identifying Functional Bacteria in the Complex Gut Microbiota</div>
+    <p class="lead">An open Flask + SQLite resource that integrates surface-target identification,
+    computational peptide (binder) design and molecular-dynamics validation for gut bacteria,
+    organized in three linked layers: <strong>Species → Target_Protein → Binder</strong>.</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card"><div class="stat-number">{{ c.species }}</div><div class="stat-label">Bacterial Species</div></div>
+    <div class="stat-card"><div class="stat-number">{{ c.proteins }}</div><div class="stat-label">Target Proteins</div></div>
+    <div class="stat-card stat-highlight"><div class="stat-number">{{ c.binders }}</div><div class="stat-label">Designed Binders</div></div>
+</div>
+
+<div class="card">
+    <div class="section-title">Team — Peptidewell</div>
+    <ul class="namelist">
+        <li>Zhijie Zhang</li>
+        <li>Sining Wang</li>
+        <li>Wenhao Ma</li>
+        <li>Zongyu Liu</li>
+        <li>Yuxuan He</li>
+        <li>Xiaolu Fu</li>
+    </ul>
+    <p class="body" style="margin-top:.8rem;">
+        <strong>Advisor:</strong> Yang Wang
+    </p>
+</div>
+
+<div class="card">
+    <div class="section-title">Affiliation</div>
+    <p class="affil">School of Life Sciences, Hubei University, Wuhan, China</p>
+</div>
+
+<div class="card">
+    <div class="section-title">Citation</div>
+    <p class="body">If you use this database or the associated workflow in your research, please cite this
+    repository. A peer-reviewed publication is in preparation and will be linked here.</p>
+    <div class="seq-box">Peptidewell (2026). Gut Microbiota Targeted Peptide Design Database — A Bioinformatics Resource for Identifying Functional Bacteria in the Complex Gut Microbiota. GitHub repository: {{ repo_url }} (accessed 2026).</div>
+    <p class="cite-note">Formal citation (authors / journal / DOI): to be added.</p>
+</div>
+
+<div class="card">
+    <div class="section-title">Contact &amp; License</div>
+    <p class="body">Questions, bug reports and data suggestions are welcome through GitHub Issues:</p>
+    <p><a class="btn btn-primary" href="{{ repo_issues }}" target="_blank" rel="noopener">Open a GitHub Issue</a></p>
+    <p class="body" style="margin-top:1rem;">
+        Released under the <strong>MIT License</strong> &copy; 2026 Peptidewell. See
+        <a href="{{ repo_url }}/blob/main/LICENSE" target="_blank" rel="noopener">LICENSE</a>.
+    </p>
+</div>
+
+{% endblock %}
