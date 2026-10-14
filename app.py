@@ -4,14 +4,15 @@ Gut Microbiota Binder Design Database
 """
 import sqlite3
 import os
+import re
 from flask import Flask, render_template, g, request
 
 app = Flask(__name__)
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "binder_db.db")
 MD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "md_plots")
 
-# Public GitHub repository URL (replaced with the real remote URL before publishing)
-REPO_URL = "https://github.com/Peptidewell/gut-microbiota-targeted-peptide-design-database"
+# Public GitHub repository URL
+REPO_URL = "https://github.com/rumbling1314/Gut-Microbiota-Targeted-Peptide-Binder-Database"
 
 # Binder/MD 编号 -> Species_ID
 NUM2SID = {
@@ -174,28 +175,54 @@ def md_list():
     db = get_db()
     items = []
     if os.path.isdir(MD_DIR):
-        for num in sorted(os.listdir(MD_DIR)):
-            d = os.path.join(MD_DIR, num)
-            if not os.path.isdir(d):
+        for sid in sorted(os.listdir(MD_DIR)):
+            sd = os.path.join(MD_DIR, sid)
+            if not os.path.isdir(sd):
                 continue
-            sid = NUM2SID.get(num)
-            sp = db.execute("SELECT * FROM Species WHERE Species_ID=?", (sid,)).fetchone() if sid else None
-            cnt = len([x for x in os.listdir(d) if x.endswith('.png')])
-            items.append({'num': num, 'sid': sid, 'sp': sp, 'count': cnt})
+            sp = db.execute("SELECT * FROM Species WHERE Species_ID=?", (sid,)).fetchone()
+            designs = [x for x in os.listdir(sd) if os.path.isdir(os.path.join(sd, x))]
+            total_png = 0
+            for d in designs:
+                total_png += len([x for x in os.listdir(os.path.join(sd, d)) if x.endswith('.png')])
+            items.append({'sid': sid, 'sp': sp, 'designs': len(designs), 'count': total_png})
     return render_template('md.html', items=items)
 
-# MD图像分析 - 某菌种详情
+# MD图像分析 - 某菌种详情（支持多 binder，按 design 分组）
 @app.route('/md/<sid>')
 def md_detail(sid):
-    num = SID2NUM.get(sid)
-    d = os.path.join(MD_DIR, num) if num else ''
-    if not num or not os.path.isdir(d):
-        return "未找到该菌种的MD分析数据", 404
     db = get_db()
     sp = db.execute("SELECT * FROM Species WHERE Species_ID=?", (sid,)).fetchone()
-    available = {x[:-4] for x in os.listdir(d) if x.endswith('.png')}
-    plots = [(key, title, desc, key in available) for key, title, desc in PLOT_META]
-    return render_template('md_detail.html', sp=sp, num=num, plots=plots)
+    if not sp:
+        return "未找到该菌种", 404
+    sd = os.path.join(MD_DIR, sid)
+    if not os.path.isdir(sd):
+        return "未找到该菌种的MD分析数据", 404
+    # 从 Binder 表关联每个 design 的编号、Binder_ID、PDB 文件名
+    rows = db.execute(
+        "SELECT Binder_ID, Structure_File FROM Binder WHERE Species_ID=? ORDER BY Binder_ID",
+        (sid,)).fetchall()
+    meta = {}
+    for r in rows:
+        m = re.match(r"(\d+)_(.+?)_dldesign", r['Structure_File'] or '')
+        if m:
+            meta[m.group(2)] = (m.group(1), r['Binder_ID'], r['Structure_File'])
+    designs = []
+    for d in sorted(os.listdir(sd)):
+        dd = os.path.join(sd, d)
+        if not os.path.isdir(dd):
+            continue
+        available = {x[:-4] for x in os.listdir(dd) if x.endswith('.png')}
+        plots = []
+        for key, title, desc in PLOT_META:
+            url = ("/static/md_plots/%s/%s/%s.png" % (sid, d, key)) if key in available else None
+            plots.append((key, title, desc, url))
+        num, bid, sfile = meta.get(d, ('?', '?', '?'))
+        designs.append({'design': d, 'num': num, 'binder_id': bid, 'sfile': sfile, 'plots': plots})
+    def _porder(item):
+        m = re.search(r'P(\d+)$', item['binder_id'])
+        return int(m.group(1)) if m else 999
+    designs.sort(key=_porder)
+    return render_template('md_detail.html', sp=sp, designs=designs)
 
 # About / 简介
 @app.route('/about')

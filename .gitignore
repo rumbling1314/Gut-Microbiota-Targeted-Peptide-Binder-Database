@@ -5,3 +5,7 @@ __pycache__/
 *.zip
 .venv/
 venv/
+
+# development backups (removed/wrong data, not part of the release)
+_removed_backup/
+data/*_OLD_backup.csv

@@ -31,7 +31,7 @@
         <div class="detail-label">Interface binding free energy dG_separated</div>
         <div><span class="badge {% if b.Raw_Score < -6 %}badge-green{% elif b.Raw_Score < -4 %}badge-blue{% else %}badge-orange{% endif %}" style="font-size:.95rem;">{{ "%.3f"|format(b.Raw_Score) }} REU</span></div>
         <div class="detail-label">Normalized dG_separated/dSASA×100</div><div>{{ "%.3f"|format(b.dG_sep_norm) }}</div>
-        <div class="detail-label">Interface buried area dSASA_int</div><div>{{ "%.2f"|format(b.dSASA_int) }} Ų</div>
+        <div class="detail-label">Interface buried area dSASA_int</div><div>{{ "%.2f"|format(b.dSASA_int) }} Å²</div>
         <div class="detail-label">complex_normalized</div><div>{{ "%.3f"|format(b.complex_norm) }}</div>
         <div class="detail-label">total_score</div><div>{{ "%.2f"|format(b.total_score) }}</div>
         <div class="detail-label">packstat</div><div>{{ "%.3f"|format(b.packstat) }}</div>
@@ -49,8 +49,8 @@
         <div class="detail-label">Overall pLDDT</div><div>{{ "%.2f"|format(b.pLDDT_total) }}</div>
         <div class="detail-label">Binder pLDDT</div><div>{{ "%.2f"|format(b.pLDDT_binder) }}</div>
         <div class="detail-label">Interface PAE</div><div>{{ "%.3f"|format(b.PAE_interaction) }}</div>
-        <div class="detail-label">Binder RMSD</div><div>{{ "%.3f"|format(b.binder_RMSD) }} Ų</div>
-        <div class="detail-label">Target RMSD</div><div>{{ "%.3f"|format(b.target_RMSD) }} Ų</div>
+        <div class="detail-label">Binder RMSD</div><div>{{ "%.3f"|format(b.binder_RMSD) }} Å</div>
+        <div class="detail-label">Target RMSD</div><div>{{ "%.3f"|format(b.target_RMSD) }} Å</div>
     </div>
     {% else %}
     <p style="color:#e67e22;">The AF2 quality metrics for this binder have not yet been compiled; to be added.</p>

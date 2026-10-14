@@ -4,28 +4,44 @@
 <h1>MD Analysis · {{ sp.Scientific_Name }} ({{ sp.Species_ID }})</h1>
 
 <div class="card">
-    <p style="color:#666; font-size:.92rem;">
+    <p style="color:#666; font-size:.92rem; margin-bottom:.6rem;">
         Scientific name: <span style="font-style:italic;">{{ sp.Scientific_Name }}</span>
         <small>({{ sp.Chinese_Name }})</small>
     </p>
+    <p style="margin:0; font-size:.9rem;">
+        <strong>Jump to binder:</strong>
+        {% for d in designs %}
+        <a href="#design-{{ loop.index }}" style="margin-right:.8rem;">{{ d.binder_id }}</a>
+        {% endfor %}
+    </p>
 </div>
 
-<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(420px, 1fr)); gap:1.2rem;">
-    {% for key, title, desc, has in plots %}
-    <div class="card" style="margin-bottom:0;">
-        <h2>{{ title }}</h2>
-        <p style="color:#888; font-size:.82rem; margin-bottom:.7rem;">{{ desc }}</p>
-        {% if has %}
-        <img src="/static/md_plots/{{ num }}/{{ key }}.png" alt="{{ title }}"
-             loading="lazy"
-             onclick="openLightbox(this.src, this.alt)"
-             style="width:100%; border:1px solid #eee; border-radius:6px; cursor:zoom-in; display:block;">
-        {% else %}
-        <div style="padding:2rem; text-align:center; color:#e67e22; font-size:.88rem; border:1px dashed #ddd; border-radius:6px;">Plot not available</div>
-        {% endif %}
+{% for d in designs %}
+<div class="card" id="design-{{ loop.index }}">
+    <h2 style="margin-bottom:.3rem;">
+        <a href="/binders/{{ d.binder_id }}" style="color:#16a085;">{{ d.binder_id }}</a>
+    </h2>
+    <p style="color:#888; font-size:.82rem; margin-bottom:1rem; word-break:break-all;">
+        PDB: {{ d.sfile }} &nbsp;|&nbsp; design {{ d.design }} (set {{ d.num }})
+    </p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(380px, 1fr)); gap:1rem;">
+        {% for key, title, desc, url in d.plots %}
+        <div>
+            <h3 style="font-size:.98rem; margin-bottom:.2rem;">{{ title }}</h3>
+            <p style="color:#999; font-size:.78rem; margin-bottom:.4rem;">{{ desc }}</p>
+            {% if url %}
+            <img src="{{ url }}" alt="{{ title }}"
+                 loading="lazy"
+                 onclick="openLightbox(this.src, this.alt)"
+                 style="width:100%; border:1px solid #eee; border-radius:6px; cursor:zoom-in; display:block;">
+            {% else %}
+            <div style="padding:1.5rem; text-align:center; color:#e67e22; font-size:.84rem; border:1px dashed #ddd; border-radius:6px;">Plot not available</div>
+            {% endif %}
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
+{% endfor %}
 
 <!-- Image zoom Lightbox -->
 <div id="lightbox" onclick="closeLightbox()"

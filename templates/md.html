@@ -6,18 +6,19 @@
 <div class="card">
     <p style="color:#666; font-size:.92rem; margin-bottom:1rem;">
         Molecular dynamics (GROMACS) trajectory analysis results for {{ items|length }} species.
-        Each species includes 8 types of analysis plots: RMSD, RMSF, Rg, hydrogen bonds, minimum distance, temperature, pressure and potential. Click a species to view details.
+        Each binder includes 8 types of analysis plots: RMSD, RMSF, Rg, hydrogen bonds, minimum distance, temperature, pressure and potential. Click a species to view details.
     </p>
     {% if items %}
     <table>
-        <thead><tr><th>Species</th><th>Plots</th><th>Action</th></tr></thead>
+        <thead><tr><th>Species</th><th>Binders</th><th>Plots</th><th>Action</th></tr></thead>
         <tbody>
             {% for it in items %}
             <tr>
                 <td>
                     {% if it.sp %}<em>{{ it.sp.Scientific_Name }}</em><br><small>{{ it.sp.Chinese_Name }} ({{ it.sid }})</small>{% else %}{{ it.sid }}{% endif %}
                 </td>
-                <td>{{ it.count }} plots</td>
+                <td>{{ it.designs }}</td>
+                <td>{{ it.count }}</td>
                 <td><a href="/md/{{ it.sid }}"><strong>View plots &rarr;</strong></a></td>
             </tr>
             {% endfor %}
