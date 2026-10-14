@@ -1,6 +1,15 @@
 # Gut Microbiota Targeted Peptide Design Database
 
+![Release](https://img.shields.io/badge/release-v2.0.0-27ae60)
+![Species](https://img.shields.io/badge/species-32-2980b9)
+![Targets](https://img.shields.io/badge/target_proteins-18-2980b9)
+![Binders](https://img.shields.io/badge/binders-66-27ae60)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
+
 ### A Bioinformatics Resource for Identifying Functional Bacteria in the Complex Gut Microbiota
+
+> **Current release: v2.0.0** (2026-10-14). For the full version history see
+> [CHANGELOG.md](CHANGELOG.md) and the [GitHub Releases](https://github.com/rumbling1314/Gut-Microbiota-Targeted-Peptide-Binder-Database/releases).
 
 A Python Flask + SQLite web resource for the design of targeting peptides (binders) against
 surface proteins of gut bacteria. The data model is organized in three layers:
@@ -57,11 +66,12 @@ python app.py            # 3. start the web server
 ├── static/
 │   ├── pdb_files/          # AlphaFold2 predicted binder complex structures (.pdb, chain A=binder, B=target)
 │   ├── target_pdb_files/   # target protein structures used for binder design (.pdb)
-│   └── md_plots/           # GROMACS analysis plots, one folder per species (8 plots each)
+│   ├── md_plots/           # GROMACS analysis plots, <Species_ID>/<binder_design>/ (8 plots per binder)
+│   └── VERSION             # current semantic version
 └── data/                   # import data
-    ├── proteins.csv        # target proteins (19 rows, 14 columns)
+    ├── proteins.csv        # target proteins (18 rows)
     ├── proteins.xlsx       # target proteins (formatted spreadsheet)
-    └── binders.csv         # binders (19 rows, 19 columns)
+    └── binders.csv         # binders (66 rows, 19 columns)
 ```
 
 ## Routes
@@ -116,8 +126,9 @@ integers and score/probability columns to floats automatically.
 ## Current Status
 
 - Species: all 32 imported
-- Target proteins + binders: completed for 19 species (one target and one binder each)
-- Pending: 13 species have no target protein or binder yet
+- Target proteins + binders: completed for **18 species**, with **66 binders** in total
+  (up to 5 binders per species)
+- Pending: 14 species have no target protein or binder yet
 
 ## Toolchain
 

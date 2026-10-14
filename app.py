@@ -14,6 +14,19 @@ MD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "md_
 # Public GitHub repository URL
 REPO_URL = "https://github.com/rumbling1314/Gut-Microbiota-Targeted-Peptide-Binder-Database"
 
+# Database version (semantic versioning, read from the VERSION file)
+def _read_version():
+    vp = os.path.join(os.path.dirname(os.path.abspath(__file__)), "VERSION")
+    try:
+        return open(vp, encoding='utf-8').read().strip()
+    except Exception:
+        return "0.0.0"
+DB_VERSION = _read_version()
+
+@app.context_processor
+def inject_meta():
+    return {'DB_VERSION': DB_VERSION, 'REPO_URL': REPO_URL}
+
 # Binder/MD 编号 -> Species_ID
 NUM2SID = {
     '009':'ANB','014':'RBR','016':'BCR','022':'RCA','023':'RIN','027':'FSA','028':'AHA',
