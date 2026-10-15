@@ -4,6 +4,19 @@ All notable changes to the **Gut Microbiota Targeted Peptide Design Database** a
 This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`MAJOR.MINOR.PATCH`)
 and the [Keep a Changelog](https://keepachangelog.com/) format.
 
+## [2.1.0] - 2026-10-14
+
+Cloud deployment support.
+
+### Added
+- One-click deployment configuration for [Render](https://render.com): `Procfile`, `render.yaml`
+  and `gunicorn` in `requirements.txt`.
+- An online instance that lets reviewers view the database in the browser without installing Python.
+
+### Changed
+- The app now reads the `PORT` environment variable.
+- Debug mode is off by default and enabled only when `FLASK_DEBUG=1`.
+
 ## [2.0.0] - 2026-10-14
 
 Major data expansion and MD reorganization.
@@ -53,6 +66,7 @@ Major data expansion and MD reorganization.
 - AlphaFold2 structures, Rosetta interface energies and GROMACS MD validation.
 - Interactive 3D structure viewer (3Dmol.js) and PDB file download.
 
+[2.1.0]: https://github.com/rumbling1314/Gut-Microbiota-Targeted-Peptide-Binder-Database/releases/tag/v2.1.0
 [2.0.0]: https://github.com/rumbling1314/Gut-Microbiota-Targeted-Peptide-Binder-Database/releases/tag/v2.0.0
 [1.2.0]: https://github.com/rumbling1314/Gut-Microbiota-Targeted-Peptide-Binder-Database/releases/tag/v1.2.0
 [1.1.0]: https://github.com/rumbling1314/Gut-Microbiota-Targeted-Peptide-Binder-Database/releases/tag/v1.1.0

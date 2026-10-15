@@ -1,6 +1,6 @@
 # Gut Microbiota Targeted Peptide Design Database
 
-![Release](https://img.shields.io/badge/release-v2.0.0-27ae60)
+![Release](https://img.shields.io/badge/release-v2.1.0-27ae60)
 ![Species](https://img.shields.io/badge/species-32-2980b9)
 ![Targets](https://img.shields.io/badge/target_proteins-18-2980b9)
 ![Binders](https://img.shields.io/badge/binders-66-27ae60)
@@ -8,7 +8,11 @@
 
 ### A Bioinformatics Resource for Identifying Functional Bacteria in the Complex Gut Microbiota
 
-> **Current release: v2.0.0** (2026-10-14). For the full version history see
+> **Live online demo:** <https://gut-peptide-design-db.onrender.com>
+> Browse the full database in your browser without installation (the free instance sleeps when idle;
+> the first request may take about 50 seconds to wake up).
+
+> **Current release: v2.1.0** (2026-10-14). For the full version history see
 > [CHANGELOG.md](CHANGELOG.md) and the [GitHub Releases](https://github.com/rumbling1314/Gut-Microbiota-Targeted-Peptide-Binder-Database/releases).
 
 A Python Flask + SQLite web resource for the design of targeting peptides (binders) against
