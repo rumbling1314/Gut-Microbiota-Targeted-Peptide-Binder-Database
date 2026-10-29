@@ -10,12 +10,11 @@ Rolling data additions (no version bump). The `main` branch and the online demo 
 reflect the latest content.
 
 ### Added
-- 7 new target proteins and 22 designed binders for previously uncovered species:
+- 6 new target proteins and 20 designed binders for previously uncovered species:
   *Christensenella minuta* (CMI), *Eubacterium ramulus* (ERA), *Mitsuokella jalaludinii* (MJA),
-  *Odoribacter laneus* (OLA), *Parabacteroides distasonis* (PDI), *Bacteroides vulgatus* (BVU)
-  and *Coprococcus eutactus* (CEU).
-- 176 molecular-dynamics figures (8 plots per new binder).
-- Target PDB files for the 7 new species, named `<Species_ID>_target.pdb`.
+  *Odoribacter laneus* (OLA), *Parabacteroides distasonis* (PDI) and *Bacteroides vulgatus* (BVU).
+- 160 molecular-dynamics figures (8 plots per new binder).
+- Target PDB files for the 6 new species, named `<Species_ID>_target.pdb`.
 
 ### Changed
 - Target PDB files are now uniformly named `<Species_ID>_target.pdb` for all species.
