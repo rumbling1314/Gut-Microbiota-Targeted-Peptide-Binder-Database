@@ -21,19 +21,27 @@
         <div>
             {% if p.DeepLocPro_Location == 'Extracellular' %}
             <span class="badge badge-green">Extracellular</span>
+            {% elif p.DeepLocPro_Location %}
+            <span class="badge badge-blue">{{ p.DeepLocPro_Location }}</span>
             {% else %}
-            <span class="badge badge-blue">Cytoplasmic Membrane</span>
+            <span class="badge">N/A</span>
             {% endif %}
+            {% if p.DeepLocPro_ExtProb is not none %}
             <small style="color:#888;">Ext. probability {{ '%.4f'|format(p.DeepLocPro_ExtProb) }}</small>
+            {% else %}
+            <small style="color:#888;">Ext. probability N/A</small>
+            {% endif %}
         </div>
         <div class="detail-label">SignalP 6.0</div>
-        <div>{{ p.SignalP_Category }} <small style="color:#888;">SP length {% if p.SignalP_SPLen %}{{ p.SignalP_SPLen }} aa{% else %}no signal peptide{% endif %}</small></div>
+        <div>{% if p.SignalP_Category %}{{ p.SignalP_Category }}{% else %}<span style="color:#999;">N/A</span>{% endif %} <small style="color:#888;">SP length {% if p.SignalP_SPLen %}{{ p.SignalP_SPLen }} aa{% else %}no signal peptide{% endif %}</small></div>
         <div class="detail-label">DeepTMHMM</div>
         <div>
             {% if p.DeepTMHMM_Type in ('TM','SP+TM') %}
             <span class="badge badge-orange">{{ p.DeepTMHMM_Type }} with TM</span>
-            {% else %}
+            {% elif p.DeepTMHMM_Type %}
             <span class="badge badge-green">{{ p.DeepTMHMM_Type }} no TM</span>
+            {% else %}
+            <span class="badge">N/A</span>
             {% endif %}
         </div>
         <div class="detail-label">Pfam Family</div>

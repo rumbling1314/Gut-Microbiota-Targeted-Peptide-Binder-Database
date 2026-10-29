@@ -150,8 +150,11 @@ def protein_detail(pid):
     binders = db.execute("""
         SELECT * FROM Binder WHERE Species_ID=? ORDER BY Raw_Score
     """, (p['Species_ID'],)).fetchall()
-    _num = SID2NUM.get(p['Species_ID'])
-    target_pdb = (_num + '_target.pdb') if _num else None
+    # Target PDB files are named by Species_ID (e.g. ANB_target.pdb)
+    target_pdb = p['Species_ID'] + '_target.pdb'
+    if not os.path.isfile(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                      'static', 'target_pdb_files', target_pdb)):
+        target_pdb = None
     return render_template('protein_detail.html', p=p, binders=binders, target_pdb=target_pdb)
 
 # Binder列表

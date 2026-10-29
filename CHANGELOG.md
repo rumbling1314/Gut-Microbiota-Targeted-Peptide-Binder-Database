@@ -4,6 +4,24 @@ All notable changes to the **Gut Microbiota Targeted Peptide Design Database** a
 This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html) (`MAJOR.MINOR.PATCH`)
 and the [Keep a Changelog](https://keepachangelog.com/) format.
 
+## [Unreleased]
+
+Rolling data additions (no version bump). The `main` branch and the online demo always
+reflect the latest content.
+
+### Added
+- 7 new target proteins and 22 designed binders for previously uncovered species:
+  *Christensenella minuta* (CMI), *Eubacterium ramulus* (ERA), *Mitsuokella jalaludinii* (MJA),
+  *Odoribacter laneus* (OLA), *Parabacteroides distasonis* (PDI), *Bacteroides vulgatus* (BVU)
+  and *Coprococcus eutactus* (CEU).
+- 176 molecular-dynamics figures (8 plots per new binder).
+- Target PDB files for the 7 new species, named `<Species_ID>_target.pdb`.
+
+### Changed
+- Target PDB files are now uniformly named `<Species_ID>_target.pdb` for all species.
+- Protein-detail and protein-list pages render "N/A" instead of erroring when
+  localization fields are absent.
+
 ## [2.1.0] - 2026-10-14
 
 Cloud deployment support.

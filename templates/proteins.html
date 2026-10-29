@@ -30,26 +30,36 @@
                 <td>
                     {% if p.DeepLocPro_Location == 'Extracellular' %}
                     <span class="badge badge-green">Extracellular</span>
+                    {% elif p.DeepLocPro_Location %}
+                    <span class="badge badge-blue">{{ p.DeepLocPro_Location }}</span>
                     {% else %}
-                    <span class="badge badge-blue">Cytoplasmic</span>
+                    <span class="badge">N/A</span>
                     {% endif %}
+                    {% if p.DeepLocPro_ExtProb is not none %}
                     <small style="color:#888;">{{ '%.3f'|format(p.DeepLocPro_ExtProb) }}</small>
+                    {% else %}
+                    <small style="color:#888;">N/A</small>
+                    {% endif %}
                 </td>
                 <td>
-                    {% if p.SignalP_Category.startswith('SPII') %}
+                    {% if p.SignalP_Category and p.SignalP_Category.startswith('SPII') %}
                     <span class="badge badge-orange">SPII Lipoprotein</span>
-                    {% elif p.SignalP_Category.startswith('SPI') %}
+                    {% elif p.SignalP_Category and p.SignalP_Category.startswith('SPI') %}
                     <span class="badge badge-blue">SPI</span>
-                    {% else %}
+                    {% elif p.SignalP_Category %}
                     <span class="badge" style="background:#eee;color:#888;">OTHER</span>
+                    {% else %}
+                    <span class="badge" style="background:#eee;color:#888;">N/A</span>
                     {% endif %}
                     <small style="color:#888;">{% if p.SignalP_SPLen %}{{ p.SignalP_SPLen }}aa{% else %}-{% endif %}</small>
                 </td>
                 <td>
                     {% if p.DeepTMHMM_Type in ('TM','SP+TM') %}
                     <span class="badge badge-orange">{{ p.DeepTMHMM_Type }}</span>
-                    {% else %}
+                    {% elif p.DeepTMHMM_Type %}
                     <span class="badge badge-green">{{ p.DeepTMHMM_Type }}</span>
+                    {% else %}
+                    <span class="badge" style="background:#eee;color:#888;">N/A</span>
                     {% endif %}
                 </td>
                 <td style="font-size:.8rem;max-width:170px;">{{ p.Pfam_Family.replace('；','; ') if p.Pfam_Family else '-' }}</td>

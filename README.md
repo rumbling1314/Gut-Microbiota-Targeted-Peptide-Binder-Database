@@ -73,9 +73,9 @@ python app.py            # 3. start the web server
 │   ├── md_plots/           # GROMACS analysis plots, <Species_ID>/<binder_design>/ (8 plots per binder)
 │   └── VERSION             # current semantic version
 └── data/                   # import data
-    ├── proteins.csv        # target proteins (18 rows)
+    ├── proteins.csv        # target proteins (25 rows)
     ├── proteins.xlsx       # target proteins (formatted spreadsheet)
-    └── binders.csv         # binders (66 rows, 19 columns)
+    └── binders.csv         # binders (88 rows, 19 columns)
 ```
 
 ## Routes
@@ -130,9 +130,9 @@ integers and score/probability columns to floats automatically.
 ## Current Status
 
 - Species: all 32 imported
-- Target proteins + binders: completed for **18 species**, with **66 binders** in total
+- Target proteins + binders: completed for **25 species**, with **88 binders** in total
   (up to 5 binders per species)
-- Pending: 14 species have no target protein or binder yet
+- Pending: 7 species have no target protein or binder yet
 
 ## Toolchain
 
