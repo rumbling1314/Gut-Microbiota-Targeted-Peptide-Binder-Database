@@ -37,6 +37,10 @@ reflect the latest content.
   (BVU, CMI, ERA, MJA, OLA, PDI), plus Pfam families for ten further targets.
 
 ### Changed
+- **MD figures re-encoded.** Width capped at 1200 px, the fully-opaque alpha channel dropped and
+  the palette reduced to 128 colours. `static/md_plots` shrank from 143.6 MB to 44.8 MB (−69%),
+  so an MD page now transfers about a third of the previous bytes while the plots stay legible
+  both in the page grid (380–600 px) and in the lightbox. Original files are kept in git history.
 - Target PDB files are now uniformly named `<Species_ID>_target.pdb` for all species.
 - Protein-detail and protein-list pages render "N/A" instead of erroring when
   localization fields are absent.
