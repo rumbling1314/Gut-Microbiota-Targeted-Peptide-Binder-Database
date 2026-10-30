@@ -100,9 +100,10 @@ def main():
     conn = sqlite3.connect(DB_PATH)
     import_species(conn)
     import_csv(conn, "proteins.csv", "Target_Protein",
-        ["Species_ID","Protein_ID","ID_Accession","Full_Length","AA_Length","Protein_Sequence",
-         "Localization_Evidence","DeepLocPro_Location","DeepLocPro_ExtProb","SignalP_Category",
-         "SignalP_SPLen","DeepTMHMM_Type","Pfam_Family","Notes"])
+        ["Species_ID","Protein_ID","ID_Accession","Full_Length","Full_Sequence","AA_Length",
+         "Design_Region","Protein_Sequence","Localization_Evidence","DeepLocPro_Location",
+         "DeepLocPro_ExtProb","SignalP_Category","SignalP_SPLen","DeepTMHMM_Type","Pfam_Family",
+         "Notes"])
     import_csv(conn, "binders.csv", "Binder",
         ["Binder_ID","Species_ID","Binder_Sequence","Length","Raw_Score","dG_sep_norm","dSASA_int",
          "complex_norm","total_score","packstat","hbonds_int","pLDDT_total","pLDDT_binder",

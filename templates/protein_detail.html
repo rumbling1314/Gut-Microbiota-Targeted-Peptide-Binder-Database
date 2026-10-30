@@ -9,7 +9,7 @@
         <div class="detail-label">Protein ID</div><div><strong>{{ p.Protein_ID }}</strong></div>
         <div class="detail-label">Accession (ID)</div><div style="font-family:monospace;">{{ p.ID_Accession }}</div>
         <div class="detail-label">Species</div><div><a href="/species/{{ p.Species_ID }}"><em>{{ p.Scientific_Name }}</em> ({{ p.Chinese_Name }})</a></div>
-        <div class="detail-label">Full / Design Length</div><div>{{ p.Full_Length }} aa <small style="color:#888;">/ Design {{ p.AA_Length }} aa</small></div>
+        <div class="detail-label">Full / Design Length</div><div>{{ p.Full_Length }} aa <small style="color:#888;">/ Design {{ p.AA_Length }} aa{% if p.Design_Region %} (residues {{ p.Design_Region }}){% endif %}</small></div>
         <div class="detail-label">Localization Evidence (detailed)</div><div>{{ p.Localization_Evidence }}</div>
     </div>
 </div>
@@ -36,12 +36,12 @@
         <div>{% if p.SignalP_Category %}{{ p.SignalP_Category }}{% else %}<span style="color:#999;">N/A</span>{% endif %} <small style="color:#888;">SP length {% if p.SignalP_SPLen %}{{ p.SignalP_SPLen }} aa{% else %}no signal peptide{% endif %}</small></div>
         <div class="detail-label">DeepTMHMM</div>
         <div>
-            {% if p.DeepTMHMM_Type in ('TM','SP+TM') %}
-            <span class="badge badge-orange">{{ p.DeepTMHMM_Type }} with TM</span>
-            {% elif p.DeepTMHMM_Type %}
-            <span class="badge badge-green">{{ p.DeepTMHMM_Type }} no TM</span>
-            {% else %}
+            {% if not p.DeepTMHMM_Type %}
             <span class="badge">N/A</span>
+            {% elif p.DeepTMHMM_Type in ('TM', 'SP+TM', 'beta') %}
+            <span class="badge badge-orange">{{ p.DeepTMHMM_Type }}</span>
+            {% else %}
+            <span class="badge badge-green">{{ p.DeepTMHMM_Type }}</span>
             {% endif %}
         </div>
         <div class="detail-label">Pfam Family</div>
@@ -57,12 +57,28 @@
 
 <div class="card">
     <h2 style="display:flex;justify-content:space-between;align-items:center;">
-        Protein Sequence (for design, {{ p.AA_Length }} aa)
+        Design construct sequence ({{ p.AA_Length }} aa{% if p.Design_Region %}, residues {{ p.Design_Region }} of the full-length protein{% endif %})
         <button onclick="navigator.clipboard.writeText(document.getElementById('seq').innerText);this.innerText='Copied'"
                 style="font-size:.75rem;padding:.2rem .7rem;background:#2980b9;color:#fff;border:none;border-radius:5px;cursor:pointer;">Copy</button>
     </h2>
     <div id="seq" class="seq-box" style="white-space:pre-wrap;word-break:break-all;">{{ p.Protein_Sequence }}</div>
 </div>
+
+{% if p.Full_Sequence %}
+<div class="card">
+    <h2 style="display:flex;justify-content:space-between;align-items:center;">
+        Full-length protein sequence (uncleaved, {{ p.Full_Length }} aa)
+        <button onclick="navigator.clipboard.writeText(document.getElementById('fullseq').innerText);this.innerText='Copied'"
+                style="font-size:.75rem;padding:.2rem .7rem;background:#7f8c8d;color:#fff;border:none;border-radius:5px;cursor:pointer;">Copy</button>
+    </h2>
+    <div id="fullseq" class="seq-box" style="white-space:pre-wrap;word-break:break-all;">{{ p.Full_Sequence }}</div>
+    <p style="font-size:.82rem;color:#888;margin-top:.5rem;">
+        The design in this database used the construct above (residues {{ p.Design_Region }}),
+        i.e. the mature protein after signal-peptide removal; this card keeps the original
+        uncleaved sequence for reference.
+    </p>
+</div>
+{% endif %}
 
 {% if p.Notes %}
 <div class="card">

@@ -29,6 +29,9 @@ def init_db():
     """)
 
     # 2. Target_Protein 靶蛋白表（含定位预测：DeepLocPro/SignalP/DeepTMHMM/Pfam）
+    #    Two sequence layers: Full_Sequence/Full_Length = the uncleaved original protein,
+    #    AA_Length/Protein_Sequence = the construct actually used for design, with
+    #    Design_Region recording where that construct sits in the full chain (e.g. 27-135).
     c.execute("""
     CREATE TABLE Target_Protein (
         Species_ID            TEXT NOT NULL,
@@ -45,6 +48,8 @@ def init_db():
         DeepTMHMM_Type        TEXT,
         Pfam_Family           TEXT,
         Notes                 TEXT,
+        Full_Sequence         TEXT,
+        Design_Region         TEXT,
         FOREIGN KEY (Species_ID) REFERENCES Species(Species_ID)
     )
     """)

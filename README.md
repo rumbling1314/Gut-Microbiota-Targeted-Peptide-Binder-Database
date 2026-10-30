@@ -97,13 +97,21 @@ python app.py            # 3. start the web server
 | Table | Purpose | Key fields |
 |---|---|---|
 | Species | 32 strains | Species_ID (PK), Scientific_Name, Chinese_Name, Taxonomy_ID, Genome_Accession, Proteome_Source, Notes |
-| Target_Protein | surface target proteins | Protein_ID (PK), Species_ID (FK), ID_Accession, Full_Length, AA_Length, Protein_Sequence, Localization_Evidence, DeepLocPro_Location, DeepLocPro_ExtProb, SignalP_Category, SignalP_SPLen, DeepTMHMM_Type, Pfam_Family, Notes |
+| Target_Protein | surface target proteins | Protein_ID (PK), Species_ID (FK), ID_Accession, Full_Length, Full_Sequence, AA_Length, Design_Region, Protein_Sequence, Localization_Evidence, DeepLocPro_Location, DeepLocPro_ExtProb, SignalP_Category, SignalP_SPLen, DeepTMHMM_Type, Pfam_Family, Notes |
 | Binder | designed targeting peptides | Binder_ID (PK), Species_ID (FK), Binder_Sequence, Length, Raw_Score, dG_sep_norm, dSASA_int, complex_norm, total_score, packstat, hbonds_int, pLDDT_total, pLDDT_binder, PAE_interaction, binder_RMSD, target_RMSD, Sequence_File, Structure_File, Notes |
 
 - `Target_Protein.Species_ID` and `Binder.Species_ID` both reference `Species.Species_ID`.
 - **Localization fields (target proteins):**
-  - `ID_Accession` — protein accession (upper case); `Full_Length` is the full length and
-    `AA_Length` is the sequence length actually used for design.
+  - `ID_Accession` — protein accession (upper case).
+  - **Two sequence layers per target.** Binder design was run on the mature protein after
+    signal-peptide removal, so both layers are stored:
+    - `Full_Length` / `Full_Sequence` — the uncleaved original protein (as annotated at the
+      accession) and its complete sequence;
+    - `AA_Length` / `Protein_Sequence` — the construct actually used for design, and
+      `Design_Region` — where that construct sits in the full chain (1-based, e.g. `27-135`).
+    When no cleavage was applied `Design_Region` is `1-<Full_Length>` and both sequences are
+    identical. The target structures under `static/target_pdb_files/` follow the same split:
+    the ATOM records are the design construct, the SEQRES header the full-length chain.
   - `DeepLocPro_Location` / `DeepLocPro_ExtProb` — DeepLocPro 2 localization and extracellular probability.
   - `SignalP_Category` / `SignalP_SPLen` — SignalP 6.0 signal-peptide class (SPI / SPII lipoprotein / OTHER) and length.
   - `DeepTMHMM_Type` — DeepTMHMM topology (SP no TM / TM / SP+TM).
